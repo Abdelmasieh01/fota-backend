@@ -21,7 +21,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.10',]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', config('RENDER_HOST')]
 
 
 # Application definition
@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
     # Whitenoise static for server
     'whitenoise.runserver_nostatic',
+    #Crontabs
+    'django_crontab'
 ]
 
 MIDDLEWARE = [
@@ -143,7 +145,7 @@ MEDIA_ROOT = BASE_DIR / 'media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CSRF_TRUSTED_ORIGINS = ['']
+CSRF_TRUSTED_ORIGINS = ['https://fota-syj1.onrender.com/']
 
 # Auth
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -165,3 +167,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
+
+# Cronjobs
+CRONJOBS = [
+    ('*/14 * * * *', 'main.cron.ping')
+]
