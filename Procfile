@@ -1,0 +1,1 @@
+web: gunicorn fota.wsgi --log-file -
