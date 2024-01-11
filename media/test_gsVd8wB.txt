@@ -1,0 +1,8 @@
+hello
+this
+file
+is
+one
+word
+per
+line
