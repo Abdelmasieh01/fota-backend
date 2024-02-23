@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     # My Apps
     'main',
     'users',
+    'cars',
     # DRF and API auth
     'rest_framework',
     'rest_framework.authtoken',

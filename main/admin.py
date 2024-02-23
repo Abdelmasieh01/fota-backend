@@ -8,7 +8,7 @@ from django.conf import settings
 
 
 class FirmwareAdmin(admin.ModelAdmin):
-    list_display = ('name', 'version')
+    list_display = ('full_model', 'version')
 
     def save_model(self, request: Any, obj: Any, form: Any, change: Any) -> None:
         super().save_model(request, obj, form, change)
