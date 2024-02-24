@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.decorators import api_view
@@ -10,6 +9,7 @@ from .serializers import FirmwareSerializer, FirmwareLineSerializer
 from cars.models import Car, CarModel
 
 # Create your views here.
+@api_view(['GET'])
 def ping(request):
     return Response(data={'status': 'ok'}, status=status.HTTP_200_OK)
 
@@ -52,19 +52,53 @@ class FirmwareLineListView(ListAPIView):
 
 
 @api_view(['GET'])
-def get_latest_firmware(request, car_id):
+def get_latest_car_firmware(request, car_id):
     """
     Gets the latest firmware of a car using the car id.
     """
     try:
         car = Car.objects.select_related('model').get(pk=car_id)
-        firmware = Firmware.objects.filter(model=car.model).order_by("-version").last()
-        item = FirmwareLineSerializer(firmware)
+        firmware = Firmware.objects.get_latest(model=car.model)
+        if not firmware:
+            raise ObjectDoesNotExist
+        
+        item = FirmwareSerializer(firmware)
     except ObjectDoesNotExist:
-        return Response(data={"message", "Firmware or car model not found!"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(data={"message": "Firmware or car model not found!"}, status=status.HTTP_404_NOT_FOUND)
 
-    return Response(data=item, status=status.HTTP_200_OK)
-    
+    return Response(data=item.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_latest_model_firmware(request, full_model: str):
+    """
+    Gets the latest firmware of a car model using the full model.
+    """
+    try:
+        model = CarModel.objects.get_model(full_model)
+        firmware = Firmware.objects.get_latest(model=model)
+        if not firmware:
+            raise ObjectDoesNotExist
+        item = FirmwareSerializer(firmware)
+    except ObjectDoesNotExist:
+        return Response(data={"message": "Firmware or Model Could not be found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    return Response(data=item.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_firmware_line(request, firmware_id, number):
+    """
+    Gets a single firmware line object.
+    """
+    try:
+        firmware = Firmware.objects.get(pk=firmware_id)
+        line = FirmwareLine.objects.get(firmware=firmware, number=number)
+        item = FirmwareLineSerializer(line)
+    except ObjectDoesNotExist:
+        return Response(data={"message": "Firmware or FirmwareLine Could not be found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    return Response(data=item.data, status=status.HTTP_200_OK)
 
         
 

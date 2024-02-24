@@ -56,7 +56,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
     phone = models.CharField(
         _("phone number"), max_length=13, unique=True, validators=[phone_validator])
-    photo = models.ImageField(upload_to=photo_path)
+    photo = models.ImageField(upload_to=photo_path, blank=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["phone"]
@@ -64,7 +64,7 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     def __str__(self):
-        return self.email
+        return self.get_full_name() or self.email
 
     class Meta:
         verbose_name = 'User'

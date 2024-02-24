@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Firmware, FirmwareLine
 
-class FirmwareSerializer(serializers.ModelField):
+class FirmwareSerializer(serializers.ModelSerializer):
     lines_count = serializers.SerializerMethodField()
 
     def get_lines_count(self, obj):
@@ -10,9 +10,9 @@ class FirmwareSerializer(serializers.ModelField):
 
     class Meta:
         model = Firmware
-        fields = ('name', 'version', 'file', 'lines_count', 'car_model')
+        fields = ('version', 'file', 'lines_count', 'car_model')
     
-class FirmwareLineSerializer(serializers.Serializer):
+class FirmwareLineSerializer(serializers.ModelSerializer):
     class Meta:
         model = FirmwareLine
         fields = ('firmware_name', 'number', 'line')

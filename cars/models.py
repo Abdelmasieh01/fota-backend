@@ -2,7 +2,7 @@ from django.db import models
 import datetime
 
 from users.models import CustomUser as User
-# Create your models here.
+
 YEAR_CHOICES = []
 for r in range(2020, (datetime.datetime.now().year+1)):
     YEAR_CHOICES.append((r,r))
@@ -36,11 +36,12 @@ class CarModel(models.Model):
         ]
     
 
-
 class Car(models.Model):
     # serial = models.AutoField(primary_key=False)
     model = models.ForeignKey(CarModel, on_delete=models.CASCADE, related_name="cars")
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cars")
+    installed_firmware = models.ForeignKey('main.Firmware', on_delete=models.CASCADE, null=True, blank=True)
+    registration_date = models.DateTimeField(auto_now_add=True)
 
     @property
     def full_model(self):
