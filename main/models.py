@@ -13,19 +13,20 @@ class FirmwareManager(models.Manager):
 
 
 class Firmware(models.Model):
-    version = models.CharField(max_length=10)
+    version = models.CharField(max_length=5)
     file = models.FileField(upload_to=file_path)
     car_model = models.ForeignKey(
         CarModel, on_delete=models.CASCADE, related_name="firmwares")
+    specific = models.BooleanField(default=False)
     
     objects = FirmwareManager()
 
     @property
-    def full_model(self):
+    def full_model(self) -> str:
         return self.car_model.full_model()
 
     def __str__(self):
-        return self.name + ' - ' + 'Version: ' + self.version
+        return self.full_model + ' - ' + 'Version: ' + self.version
 
     class Meta:
         constraints = [
@@ -41,7 +42,7 @@ class FirmwareLine(models.Model):
 
     @property
     def firmware_name(self):
-        return self.firmware.name
+        return self.firmware.full_model
 
     @property
     def firmware_car(self):

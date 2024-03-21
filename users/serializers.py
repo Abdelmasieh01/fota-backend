@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import CustomUser
+from cars.serializers import CarSerializer
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -17,7 +18,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         password2 = self.validated_data.get('password2')
 
         if password1 != password2:
-            raise serializers.ValidationError({'password': 'Passwords do not match.'})
+            raise serializers.ValidationError(
+                {'password': 'Passwords do not match.'})
 
         user.set_password(password1)
         user.save()
@@ -25,10 +27,19 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'phone', 'first_name', 'last_name', 'photo', 'password', 'password2')
+        fields = ('email', 'phone', 'first_name', 'last_name',
+                  'photo', 'password', 'password2')
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ('email', 'phone', 'first_name', 'last_name', 'photo')
+
+
+class UserDetailsSerializer(serializers.ModelSerializer):
+    cars = CarSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ('email', 'phone', 'first_name', 'last_name', 'photo', 'cars')
