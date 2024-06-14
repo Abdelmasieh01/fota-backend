@@ -23,7 +23,7 @@ DOWNGRADE_STATUS = "downgrade_status"
 REPORT = "report"
 
 
-def validate_signature(payload: dict, received_signature: str, secret_key: str) -> bool:
+def validate_signature(payload: dict, received_signature: str) -> bool:
     if not received_signature:
         return False
 
@@ -84,7 +84,7 @@ def firmware_upgrade(payload):
             return Response(data={"status": "success", "car": car_item.data}, status=http.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response(data={"status": "error",
-                                  "details": "Couldn't complete operation!, Either the car object or the firmware object doesn't exist",},
+                                  "details": "Couldn't complete operation!, Either the car object or the firmware object doesn't exist", },
                             status=http.HTTP_400_BAD_REQUEST)
 
 

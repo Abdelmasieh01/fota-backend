@@ -1,1 +1,1 @@
-web: gunicorn fota.wsgi --log-file -
+web: daphne -b 0.0.0.0 fota.asgi:application --log-file -

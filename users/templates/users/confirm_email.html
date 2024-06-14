@@ -1,0 +1,11 @@
+{% block main %}
+{% if is_email_confirmed %}
+<div>
+    <p>Your email was successfully cofirmed!</p>
+</div>
+{% else %}
+<div>
+    <p>The link you entered is expired! Please, request a new confirmation link.</p>
+</div>
+{% endif %}
+{% endblock %}

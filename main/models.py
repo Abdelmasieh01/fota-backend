@@ -4,7 +4,7 @@ from cars.models import CarModel
 
 
 def file_path(instance, filename):
-    return f'firmwares/{instance.name}/{filename}'
+    return f'firmwares/{instance.car_model}/{instance.version}/{filename}'
 
 
 class FirmwareManager(models.Manager):
@@ -23,7 +23,7 @@ class Firmware(models.Model):
 
     @property
     def full_model(self) -> str:
-        return self.car_model.full_model()
+        return self.car_model.full_model
 
     def __str__(self):
         return self.full_model + ' - ' + 'Version: ' + self.version

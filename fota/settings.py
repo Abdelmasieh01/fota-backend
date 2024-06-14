@@ -23,16 +23,20 @@ WEBHOOK_KEY = config("WEBHOOK_KEY")
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', config('RENDER_HOST')]
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1', config('RENDER_HOST')]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    # Channels server
+    'daphne',
     # My Apps
     'main',
     'users',
     'cars',
+    'customer_service',
     # DRF and API auth
     'rest_framework',
     'rest_framework.authtoken',
@@ -52,9 +56,11 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
     # Whitenoise static for server
     'whitenoise.runserver_nostatic',
-    #Crontabs
+    # Crontabs
     'django_crontab',
     "corsheaders",
+    # anymail
+    "anymail",
 ]
 
 MIDDLEWARE = [
@@ -179,3 +185,23 @@ CRONJOBS = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+
+# EMAIL CONFIG
+# Test backend
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# Production backend
+# EMAIL_BACKEND = "anymail.backends.brevo.EmailBackend"
+
+ANYMAIL = {
+    "BREVO_API_KEY": config("BREVO_API_KEY"),
+}
+
+
+# Channels config
+ASGI_APPLICATION = "fota.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}

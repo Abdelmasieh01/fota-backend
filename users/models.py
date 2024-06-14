@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
+from uuid import uuid4
 
 # Create your models here.
 
@@ -52,11 +53,13 @@ class CustomUser(AbstractUser):
     username = None
     phone_validator = RegexValidator(
         r'^(01\d{9}|\+201\d{9})$', 'This is not a valid egyptian phone number')
-    
+
     email = models.EmailField(_("email address"), unique=True)
     phone = models.CharField(
         _("phone number"), max_length=13, unique=True, validators=[phone_validator])
     photo = models.ImageField(upload_to=photo_path, blank=True)
+    is_email_confirmed = models.BooleanField(default=False)
+    is_customer_service = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["phone"]
@@ -69,3 +72,9 @@ class CustomUser(AbstractUser):
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'
+
+
+class EmailConfirmationToken(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

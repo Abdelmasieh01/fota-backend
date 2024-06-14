@@ -44,3 +44,7 @@ class UserManagerTestCase(TestCase):
             User.objects.create_superuser(
                 email="super@user.com", phone="010000000", password="foo", is_superuser=False)
         
+
+
+class UserTestCase(TestCase):
+    pass
