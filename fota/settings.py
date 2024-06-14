@@ -23,7 +23,7 @@ WEBHOOK_KEY = config("WEBHOOK_KEY")
 
 DEBUG = True
 
-# ALLOWED_HOSTS = ['localhost', '127.0.0.1', config('RENDER_HOST')]
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', config('RENDER_HOST')]
 ALLOWED_HOSTS = ['*']
 
 
