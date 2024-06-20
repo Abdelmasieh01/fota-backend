@@ -9,7 +9,7 @@ for r in range(2020, (datetime.datetime.now().year+1)):
 
 
 def photo_path(instance, filename):
-    return "cars/{name}/{filename}".format(name=instance.full_model, filename=filename)
+    return "cars/{name}/{year}/{filename}".format(name=instance.name, year=instance.year, filename=filename)
 
 
 class CarModelManager(models.Manager):

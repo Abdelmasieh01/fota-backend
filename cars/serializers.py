@@ -3,13 +3,14 @@ from .models import Car, CarModel
 
 
 class CarModelSerializer(serializers.ModelSerializer):
-    class Meta:    
+    class Meta:
         model = CarModel
-        fields = ('name', 'year')
+        fields = ('id', 'name', 'year', 'picture')
 
 
 class CarSerializer(serializers.ModelSerializer):
     model = CarModelSerializer(read_only=True)
+
     class Meta:
         model = Car
         fields = ('model', 'registration_date')

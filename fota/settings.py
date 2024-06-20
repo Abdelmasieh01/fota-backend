@@ -156,7 +156,7 @@ MEDIA_ROOT = BASE_DIR / 'media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['https://fota-syj1.onrender.com/']
+CSRF_TRUSTED_ORIGINS = [f'https://{config("RENDER_HOST")}', ]
 
 # Auth
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -168,6 +168,8 @@ REST_AUTH = {
 }
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+OLD_PASSWORD_FIELD_ENABLED = True
+LOGOUT_ON_PASSWORD_CHANGE = False
 
 # Rest Framework Settings
 

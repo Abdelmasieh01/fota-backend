@@ -9,6 +9,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
 from rest_framework import status as http
+from rest_framework.decorators import api_view
 
 from fota.errors import SignatureValidationError
 from cars.models import Car
@@ -24,9 +25,6 @@ REPORT = "report"
 
 
 def validate_signature(payload: dict, received_signature: str) -> bool:
-    if not received_signature:
-        return False
-
     hash_algorithm = hashlib.sha256
     required_string = ""
     for key in sorted(payload, key=str.lower):
@@ -36,22 +34,23 @@ def validate_signature(payload: dict, received_signature: str) -> bool:
         required_string = required_string + x
 
     expected_signature = hmac.new(
-        WEBHOOK_KEY, required_string, hash_algorithm).hexdigest()
-    print(expected_signature)
-    print(received_signature)
+        WEBHOOK_KEY.encode('utf-8'), required_string.encode('utf-8'), hash_algorithm).hexdigest()
+    # print(expected_signature)
+    # print(received_signature)
 
     valid = hmac.compare_digest(expected_signature, received_signature)
     return valid
 
 
 @csrf_exempt
+@api_view(['POST'])
 def handle_webhook(request: WSGIRequest):
     received_signature = request.headers.get("signature")
     if not received_signature:
         return Response(data={"message": "Error! HMAC signature header not found!"}, status=http.HTTP_400_BAD_REQUEST)
     try:
-        payload = json.loads(request.body.decode("utf-8"))
-        is_valid = validate_signature(payload, received_signature, WEBHOOK_KEY)
+        payload = request.data
+        is_valid = validate_signature(payload, received_signature)
         if is_valid:
             webhook_handlers = {
                 UPGRADE_STATUS: firmware_upgrade,
@@ -61,20 +60,28 @@ def handle_webhook(request: WSGIRequest):
             if payload["type"] in webhook_handlers.keys():
                 logger.debug(
                     "Handling new webhook event of type: " + payload["type"])
-                webhook_handlers[payload["type"]](payload=payload)
+                return webhook_handlers[payload["type"]](payload=payload)
         raise SignatureValidationError
     except ValueError as e:
-        return Response(data={"message": "An error occured while handling the payload!", "detail": e.__str__})
+        return Response(
+            data={"message": "An error occured while handling the payload!",
+                  "detail": e.__str__},
+            status=http.HTTP_400_BAD_REQUEST
+        )
     except SignatureValidationError as e:
-        return Response(data={"message": "An error occured while handling the payload!", "detail": e.message})
+        return Response(
+            data={"message": "An error occured while handling the payload!",
+                  "detail": e.message},
+            status=http.HTTP_400_BAD_REQUEST
+        )
 
 
 def firmware_upgrade(payload):
     status = payload["status"]
-    print(status)
+    # print(status)
     if status == "success":
-        car_id = payload.get("car_id")
-        firmware_id = payload.get("firmware_id")
+        car_id = payload.get("car_id", "")
+        firmware_id = payload.get("firmware_id", "")
         try:
             car = Car.objects.get(pk=int(car_id))
             firmware = Firmware.objects.get(pk=int(firmware_id))
@@ -82,7 +89,7 @@ def firmware_upgrade(payload):
             car.save()
             car_item = CarSerializer(car)
             return Response(data={"status": "success", "car": car_item.data}, status=http.HTTP_200_OK)
-        except ObjectDoesNotExist:
+        except:
             return Response(data={"status": "error",
                                   "details": "Couldn't complete operation!, Either the car object or the firmware object doesn't exist", },
                             status=http.HTTP_400_BAD_REQUEST)
