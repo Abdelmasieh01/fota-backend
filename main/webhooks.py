@@ -1,6 +1,5 @@
 import hmac
 import hashlib
-import json
 import logging
 
 from django.views.decorators.csrf import csrf_exempt

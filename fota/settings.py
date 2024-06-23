@@ -191,9 +191,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # EMAIL CONFIG
 # Test backend
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # Production backend
-# EMAIL_BACKEND = "anymail.backends.brevo.EmailBackend"
+EMAIL_BACKEND = "anymail.backends.brevo.EmailBackend"
 
 ANYMAIL = {
     "BREVO_API_KEY": config("BREVO_API_KEY"),
