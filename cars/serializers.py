@@ -35,9 +35,10 @@ class CarModelDetailsSerializer(serializers.ModelSerializer):
 class CarSerializer(serializers.ModelSerializer):
     model = CarModelSerializer(read_only=True)
     car_color = serializers.ReadOnlyField(source='car_color.name')
+    car_color_code = serializers.ReadOnlyField(source='car_color.hex_code')
     car_class = serializers.ReadOnlyField(source='car_class.name')
 
     class Meta:
         model = Car
-        fields = ('id', 'car_color', 'car_class', 'model',
+        fields = ('id', 'car_color', 'car_color_code', 'car_class', 'model',
                   'registration_date', 'installed_firmware')
