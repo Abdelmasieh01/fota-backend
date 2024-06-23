@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Car, CarModel, CarReport
+from .models import Car, CarModel, CarReport, CarClass, CarColor
 # Register your models here.
 
 
@@ -17,6 +17,12 @@ class CarReportAdmin(admin.ModelAdmin):
     ordering = ["-timestamp"]
 
 
+class CarColorAdmin(admin.ModelAdmin):
+    list_display = ["name", "hex_code"]
+
+
 admin.site.register(Car, CarAdmin)
 admin.site.register(CarModel, CarModelAdmin)
 admin.site.register(CarReport, CarReportAdmin)
+admin.site.register(CarColor, CarColorAdmin)
+admin.site.register(CarClass)
