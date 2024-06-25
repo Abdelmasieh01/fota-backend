@@ -31,15 +31,35 @@ class RegisterSerializer(serializers.ModelSerializer):
                   'photo', 'password', 'password2')
 
 
+
+
 class UserSerializer(serializers.ModelSerializer):
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        request = self.context.get("request", )
+        if obj.photo:
+            return obj.photo
+        return request.build_absolute_uri('/media/defaults/default-profile.png')
+
+
     class Meta:
         model = CustomUser
-        fields = ('email', 'phone', 'first_name', 'last_name', 'photo', 'is_customer_service')
+        fields = ('email', 'phone', 'first_name',
+                  'last_name', 'photo', 'is_customer_service')
 
 
 class UserDetailsSerializer(serializers.ModelSerializer):
     cars = CarSerializer(many=True, read_only=True)
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        request = self.context.get("request", )
+        if obj.photo:
+            return request.build_absolute_uri(obj.photo.url)
+        return request.build_absolute_uri('/media/defaults/default-profile.png')
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'phone', 'first_name', 'last_name', 'photo', 'cars', 'is_email_confirmed', 'is_customer_service')
+        fields = ('email', 'phone', 'first_name', 'last_name', 'photo',
+                  'cars', 'is_email_confirmed', 'is_customer_service')

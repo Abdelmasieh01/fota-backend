@@ -28,7 +28,7 @@ class CustomUserAdmin(UserAdmin):
     )
     search_fields = ("email", "phone", "first_name", "last_name")
     ordering = ("first_name", "last_name", "email",)
-    readonly_fields = ("is_email_confirmed",)
+    # readonly_fields = ("is_email_confirmed",)
 
 
 
