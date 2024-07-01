@@ -31,18 +31,7 @@ class RegisterSerializer(serializers.ModelSerializer):
                   'photo', 'password', 'password2')
 
 
-
-
 class UserSerializer(serializers.ModelSerializer):
-    photo = serializers.SerializerMethodField()
-
-    def get_photo(self, obj):
-        request = self.context.get("request", )
-        if obj.photo:
-            return obj.photo
-        return request.build_absolute_uri('/media/defaults/default-profile.png')
-
-
     class Meta:
         model = CustomUser
         fields = ('email', 'phone', 'first_name',

@@ -42,7 +42,7 @@ class SendEmailConfirmationTokenAPIView(APIView):
         if user.is_email_confirmed:
             return Response(data={"message": "Already confirmed!"}, status=400)
         token = EmailConfirmationToken.objects.create(user=user)
-        print(request.get_host())
+        # print(request.get_host())
         send_confirmation_email(
             email=user.email, token_id=token.pk, user_id=user.pk, host=request.get_host())
         return Response(data=None, status=201)

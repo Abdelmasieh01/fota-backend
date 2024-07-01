@@ -16,6 +16,7 @@ class OnwerCarsListView(ListAPIView):
     """
     Returns the list of cars of the owner(user).
     """
+    permission_classes = [IsAuthenticated]
     serializer_class = CarSerializer
     
     def get_queryset(self):
